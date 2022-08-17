@@ -1,40 +1,30 @@
 from typing import *
 import pygame
 from sys import exit
-from dotClass import Dot
+from classes import Dot, Config
 from drawingFuncs import *
 from gameplayFuncs import *
 
-# list that will hold the grid of dots
-grid = list()
-
-def createGrid(grid: List):
-    size = int(input("What do you want the size of the grid to be? "))
-    for _ in range(size):
-        row = list()
-        for _ in range(size):
-            row.append(Dot())
-        grid.append(row)
-    return size
+# initialize configurations
+cfg = Config()
+cfg.askStyle()
+cfg.askGridSize()
 
 
-# asks user if it wants to play with the default style or with a melody_kuromi style
-def askStyle():
-    r = int(input("\n1) Default Style (Blue / Orange)\n2) 'Melody and Kuromi' Style\nWhat style do you want to play on? "))
-    return r-1
+# initialize grid
+grid = createGrid(cfg.grid_size)
 
 
+# main
 def main():
     running = True
     click_state = False
     player_id = 0
     player_score = [0,0]
-    style_id = askStyle()
-    grid_length = createGrid(grid)
 
     pygame.init()
     screen = setScreen()
-    drawGrid(grid_length, screen)
+    drawGrid(cfg.grid_size, screen)
 
     run_once = True
     while running:
@@ -44,21 +34,20 @@ def main():
             # just to initialize the score board
             # without stoping it, it would be drawing infinitely times until the program closes
             if (run_once):
-                displayPlayerScores(grid_length, screen, player_score, style_id)
-                print("abah")
+                displayPlayerScores(cfg.grid_size, screen, player_score, cfg)
                 run_once = False
 
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
             if (event.type == pygame.MOUSEBUTTONDOWN and click_state == False):
-                first_dot_coord = getSelectedDot(grid_length)
-                drawSelectedDot(grid_length, screen, first_dot_coord, player_id, style_id)
+                first_dot_coord = getSelectedDot(cfg.grid_size)
+                drawSelectedDot(cfg.grid_size, screen, first_dot_coord, player_id, cfg)
                 click_state = True
 
             elif (event.type == pygame.MOUSEBUTTONDOWN and click_state == True):
 
-                second_dot_coord = getSelectedDot(grid_length)
+                second_dot_coord = getSelectedDot(cfg.grid_size)
                 diff_0 = first_dot_coord[0] - second_dot_coord[0]
                 diff_1 = first_dot_coord[1] - second_dot_coord[1]
 
@@ -68,36 +57,36 @@ def main():
                     if lineIsEmpty(grid, first_dot_coord, second_dot_coord):
                         updateDotState(grid[first_dot_coord[1]][first_dot_coord[0]], diff_0, diff_1)
                         updateDotState(grid[second_dot_coord[1]][second_dot_coord[0]], -diff_0, -diff_1)
-                        drawLine(first_dot_coord, second_dot_coord, grid_length, screen, player_id, style_id)
+                        drawLine(first_dot_coord, second_dot_coord, cfg.grid_size, screen, player_id, cfg)
 
                         points = playerMadeSquare(grid, first_dot_coord, second_dot_coord)
                         if (points > 0):
                             player_score[player_id] += points
-                            drawSquares(grid, screen, first_dot_coord, player_id, style_id)
-                            displayPlayerScores(grid_length, screen, player_score, style_id)
+                            drawSquares(grid, screen, first_dot_coord, player_id, cfg)
+                            displayPlayerScores(cfg.grid_size, screen, player_score, cfg)
 
-                        drawGrid(grid_length, screen)
+                        drawGrid(cfg.grid_size, screen)
                         if (points == 0):
                             player_id = switch_player(player_id)
                     else:
-                        drawSingleDot(grid_length, screen, first_dot_coord)
+                        drawSingleDot(cfg.grid_size, screen, first_dot_coord)
                         print("That line is already occupied!\nPlay again!")
                     click_state = False
                 
                 # played on the same Dot
                 elif (abs(diff_0) == 0 and abs(diff_1) == 0):
-                    drawSingleDot(grid_length, screen, first_dot_coord)
+                    drawSingleDot(cfg.grid_size, screen, first_dot_coord)
                     print("You chose the same Dot!\nPlay again!")
                     click_state = False
 
                 # played diagonaly
                 elif (abs(diff_0) ^ abs(diff_1) == False):
-                    drawSingleDot(grid_length, screen, first_dot_coord)
+                    drawSingleDot(cfg.grid_size, screen, first_dot_coord)
                     print("You can't make diagonal lines!\nPlay again!")
                     click_state = False
                 
 
-            if player_score[0] + player_score[1] == (grid_length-1)**2:
+            if player_score[0] + player_score[1] == (cfg.grid_size-1)**2:
                 running = False
                 break
         pygame.display.update()

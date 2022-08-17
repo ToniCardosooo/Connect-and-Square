@@ -1,7 +1,19 @@
 from typing import *
 import pygame
-from dotClass import Dot
+from classes import Dot
 from globalVar import *
+
+
+# creates grid of the game
+def createGrid(size: int):
+    grid = list()
+    for _ in range(size):
+        row = list()
+        for _ in range(size):
+            row.append(Dot())
+        grid.append(row)
+    return grid
+
 
 # gives the grid's indices of the dot selected on screen
 def getSelectedDot(grid_length: int):
