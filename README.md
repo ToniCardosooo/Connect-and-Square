@@ -11,7 +11,8 @@ RULES OF THE GAME
 
 
 HOW TO RUN THE PROGRAM
-- Install the most recent version of Python in case you don't have it.
+- Install the most recent version of Python in case you don't have it. You can do it by openning the command prompt and typing 'pip install python'.
+- Install pygame in case you don't have it. You can do it by openning the command prompt and typing 'pip install pygame'.
 - Make sure all files are saved in the same directory.
 - Open the command prompt and type 'python ConnectAndSquare.py'
 - Choose the graphical style off the game.
