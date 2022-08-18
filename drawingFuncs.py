@@ -1,6 +1,6 @@
 import pygame
 from typing import *
-from classes import Config
+from classes import Dot, Config
 from globalVar import *
 
 # sets the game window
@@ -19,27 +19,12 @@ def drawSingleDot(grid_length, screen, dot_coord):
     pygame.draw.circle(screen, WHITE, (x,y), (DISPLAY_HEIGHT - 2*GRID_OFFSET) / (6*grid_length))
 
 
-
 # draw the grid on the screen
 def drawGrid(grid_length, screen):
-    x_init, y_init = GRID_OFFSET, GRID_OFFSET # the first dot is draw at the (GRID_OFFSET, GRID_OFFSET) pixel
-    x, y = x_init, y_init
+    for i in range(grid_length):
+        for j in range(grid_length):
+            drawSingleDot(grid_length, screen, (j,i))
 
-    num_dots = grid_length*grid_length
-
-    while (num_dots > 0):
-        
-        pygame.draw.circle(screen, BLACK, (x,y), (DISPLAY_HEIGHT - 2*GRID_OFFSET) / (4*grid_length))
-        pygame.draw.circle(screen, WHITE, (x,y), (DISPLAY_HEIGHT - 2*GRID_OFFSET) / (6*grid_length))
-
-        num_dots -= 1
-
-        if (num_dots % grid_length == 0):
-            x = x_init
-            y += (DISPLAY_HEIGHT - 2*GRID_OFFSET) / (grid_length-1) # vertical position change
-        else:
-            x += (DISPLAY_WIDTH - 2*GRID_OFFSET) / (grid_length-1) # horizontal position change
-        
 
 # display on screen which Dot got selected
 def drawSelectedDot(grid_length, screen, dot_coord, player_id, cfg: Config):
@@ -62,11 +47,48 @@ def drawLine(first_dot_coord, second_dot_cood, grid_lenght, screen, player_id, c
     pygame.draw.line(screen, cfg.player_colors[player_id], pos_init, pos_end, 5) 
 
 
+# re-draws the dots that are vertices of the square made
+def drawSquareDots(grid, screen, grid_length, first_dot_coord, first_dot_square_pos):    
+    
+    second_dot_coord, third_dot_coord, fourth_dot_coord = (0,0), (0,0), (0,0)
+
+    # if first dot is top left
+    if (first_dot_square_pos == (0,0)):
+        second_dot_coord = (first_dot_coord[0] + 1, first_dot_coord[1]) # top right
+        third_dot_coord = (first_dot_coord[0], first_dot_coord[1] + 1) # bottom left
+        fourth_dot_coord = (first_dot_coord[0] + 1, first_dot_coord[1] + 1) # bottom right
+
+    # if first dot is top right
+    elif (first_dot_square_pos == (0,1)):
+        second_dot_coord = (first_dot_coord[0] - 1, first_dot_coord[1]) # top left
+        third_dot_coord = (first_dot_coord[0] - 1, first_dot_coord[1] - 1) # bottom left
+        fourth_dot_coord = (first_dot_coord[0], first_dot_coord[1] - 1) # bottom right
+
+    # if first dot is bottom left
+    elif (first_dot_square_pos == (1,0)):
+        second_dot_coord = (first_dot_coord[0], first_dot_coord[1] - 1) # top left
+        third_dot_coord = (first_dot_coord[0] + 1, first_dot_coord[1] - 1) # top right
+        fourth_dot_coord = (first_dot_coord[0] + 1, first_dot_coord[1]) # bottom right
+
+    # if first dot is bottom right
+    elif (first_dot_square_pos == (1,1)):
+        second_dot_coord = (first_dot_coord[0] - 1, first_dot_coord[1] - 1) # top left
+        third_dot_coord = (first_dot_coord[0], first_dot_coord[1] - 1) # top right
+        fourth_dot_coord = (first_dot_coord[0] - 1, first_dot_coord[1]) # bottom left
+
+    drawSingleDot(grid_length, screen, first_dot_coord)
+    drawSingleDot(grid_length, screen, second_dot_coord)
+    drawSingleDot(grid_length, screen, third_dot_coord)
+    drawSingleDot(grid_length, screen, fourth_dot_coord)
+
+
 # display the square(s) made by the user
 def drawSquares(grid, screen, first_dot_coord, player_id, cfg: Config):
-    dot = grid[first_dot_coord[1]][first_dot_coord[0]]
+    dot : Dot = grid[first_dot_coord[1]][first_dot_coord[0]]
 
     while len(dot.square_pos) > 0:
+        first_dot_square_pos = dot.square_pos[0]
+
         vec = dot.square_pos.pop(0)
 
         x = GRID_OFFSET + (first_dot_coord[0] - vec[1]) * ((DISPLAY_WIDTH - 2*GRID_OFFSET) / (len(grid)-1))
@@ -80,6 +102,10 @@ def drawSquares(grid, screen, first_dot_coord, player_id, cfg: Config):
             image = MELODY_IMAGE if (player_id == 0) else KUROMI_IMAGE
             image = pygame.transform.scale(image, (lenght, lenght))
             screen.blit(image, (x,y))
+
+        # re-draw dots
+        drawSquareDots(grid, screen, cfg.grid_size, first_dot_coord, first_dot_square_pos)
+
 
 
 # display the current score of the players
