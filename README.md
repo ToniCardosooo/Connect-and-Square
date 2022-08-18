@@ -1,6 +1,6 @@
 # Connect-and-Square
 
-RULES OF THE GAME
+GAME RULES
 - This is a 2-player game.
 - The board is composed by a N x N sized dotted square (N is the size chosen by the players).
 - In its turn, each player can connect two dots vertically  or horizontally that are 1 "dot-space" apart, which will draw a line connecting both dots selected.
