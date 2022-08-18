@@ -40,11 +40,14 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            
+            # select the first dot
             if (event.type == pygame.MOUSEBUTTONDOWN and click_state == False):
                 first_dot_coord = getSelectedDot(cfg.grid_size)
                 drawSelectedDot(cfg.grid_size, screen, first_dot_coord, player_id, cfg)
                 click_state = True
 
+            # select the second dot
             elif (event.type == pygame.MOUSEBUTTONDOWN and click_state == True):
 
                 second_dot_coord = getSelectedDot(cfg.grid_size)
@@ -53,21 +56,26 @@ def main():
 
                 # check if the player is clicking on a different dot or not playing diagonaly
                 if ((abs(diff_0) == 1 or abs(diff_1) == 1) and (abs(diff_0) ^ abs(diff_1) == True)): # ^ is the XOR bitwise operator
-
+                    
+                    # check if the player is not choosing a pair of dots already connected with a line
                     if lineIsEmpty(grid, first_dot_coord, second_dot_coord):
+                        # if there's no line connecting the dots, update the correspondent attributes of the dots to make them connected and draw the line
                         updateDotState(grid[first_dot_coord[1]][first_dot_coord[0]], diff_0, diff_1)
                         updateDotState(grid[second_dot_coord[1]][second_dot_coord[0]], -diff_0, -diff_1)
                         drawLine(first_dot_coord, second_dot_coord, cfg.grid_size, screen, player_id, cfg)
 
+                        # check if the player made / closed a square 
+                        # if so, draw it and update the score
                         points = playerMadeSquare(grid, first_dot_coord, second_dot_coord)
                         if (points > 0):
                             player_score[player_id] += points
                             drawSquares(grid, screen, first_dot_coord, player_id, cfg)
                             displayPlayerScores(cfg.grid_size, screen, player_score, cfg)
 
-                        drawGrid(cfg.grid_size, screen)
                         if (points == 0):
                             player_id = switch_player(player_id)
+                            drawSingleDot(cfg.grid_size, screen, first_dot_coord)
+                            drawSingleDot(cfg.grid_size, screen, second_dot_coord)
                     else:
                         drawSingleDot(cfg.grid_size, screen, first_dot_coord)
                         print("That line is already occupied!\nPlay again!")
