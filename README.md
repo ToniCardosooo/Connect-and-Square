@@ -14,12 +14,10 @@ HOW TO RUN THE PROGRAM
 - Install the most recent version of Python in case you don't have it. You can do it by openning the command prompt and typing 'pip install python'.
 - Install pygame in case you don't have it. You can do it by openning the command prompt and typing 'pip install pygame'.
 - Make sure all files are saved in the same directory.
-- Open the command prompt, go the directory with all off the game files, and type 'python ConnectAndSquare.py'
-- Choose the graphical style off the game.
+- Open the command prompt, go the directory with all off the game files, and type 'python ConnectAndSquare.py'.
+- Choose if you want to play with a friend on your computer or agains an AI player!
+- Choose the graphical style of the game.
 - Choose the size of the grid.
 
 
 Enjoy!
-
-
-(in the future, it might be developed a simple AI agent to play the game in a 'Human vs PC' gamemode)
