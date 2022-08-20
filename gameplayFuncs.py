@@ -5,7 +5,7 @@ from globalVar import *
 
 
 # creates grid of the game
-def createGrid(size: int):
+def createGrid(size: int) -> List:
     grid = list()
     for _ in range(size):
         row = list()
@@ -44,13 +44,42 @@ def switch_player(player_id):
 def updateDotState(dot: Dot, diff_0: int, diff_1: int):
     if (diff_0 == -1):
         dot.right_line = True
-    else:
+    elif (diff_0 == 1):
         dot.left_line = True
 
     if (diff_1 == -1):
         dot.lower_line = True
-    else:
+    elif (diff_1 == 1):
         dot.upper_line = True
+
+def removeUpdate(dot: Dot, diff_0: int, diff_1: int):
+    if (diff_0 == -1):
+        dot.right_line = False
+    elif (diff_0 == 1):
+        dot.left_line = False
+
+    if (diff_1 == -1):
+        dot.lower_line = False
+    elif (diff_1 == 1):
+        dot.upper_line = False
+
+
+# merges the properties with True value of dot_B to the corresponding properties of dot_A, and possible squares made (only used in to play the AI move)
+def mergeDots(dot_A : Dot, dot_B : Dot):
+    if (dot_B.left_line):
+        dot_A.left_line = True
+
+    if (dot_B.right_line):
+        dot_A.right_line = True
+
+    if (dot_B.upper_line):
+        dot_A.upper_line = True
+
+    if (dot_B.lower_line):
+        dot_A.lower_line = True
+    
+    dot_A.square_pos = dot_B.square_pos
+
 
 
 # check if player is not drawing over an already existing line
