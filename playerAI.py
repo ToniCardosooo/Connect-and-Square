@@ -71,8 +71,6 @@ def greedy(grid, config : Config):
                     updateDotState(first_dot, diff_0, diff_1)
                     updateDotState(second_dot, diff_0, diff_1)
 
-                    #print(f"Is the line formed by the dots {f_dot_coord} & {s_dot_coord} is empty? {lineIsEmpty(grid_copy, f_dot_coord, s_dot_coord)}")
-
                     # AI will choose the first move that makes the biggest amount of squares
                     points = playerMadeSquare(grid_copy, f_dot_coord, s_dot_coord)
                     if (points > best_play[0]):
