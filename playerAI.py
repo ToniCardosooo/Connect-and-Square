@@ -74,7 +74,6 @@ def greedy(grid, config : Config):
                     # AI will choose the first move that makes the biggest amount of squares
                     points = playerMadeSquare(grid_copy, f_dot_coord, s_dot_coord)
                     if (points > best_play[0]):
-                        print("square "*points)
                         best_play = (points, f_dot_coord, s_dot_coord, first_dot, second_dot)
 
                     removeUpdate(first_dot, diff_0, diff_1)
