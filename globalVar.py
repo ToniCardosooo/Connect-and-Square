@@ -8,6 +8,8 @@ GRID_OFFSET = 150
 FONT_SIZE = GRID_OFFSET//3
 
 # colors in RBG tuples
+RED = (255,0,0)
+
 WHITE = (255, 255, 255)
 GREY_LIGHT = (211, 211, 211)
 BLACK = (0, 0, 0)

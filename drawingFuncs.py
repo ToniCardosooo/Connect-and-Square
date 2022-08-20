@@ -61,8 +61,8 @@ def drawSquareDots(grid, screen, grid_length, first_dot_coord, first_dot_square_
     # if first dot is top right
     elif (first_dot_square_pos == (0,1)):
         second_dot_coord = (first_dot_coord[0] - 1, first_dot_coord[1]) # top left
-        third_dot_coord = (first_dot_coord[0] - 1, first_dot_coord[1] - 1) # bottom left
-        fourth_dot_coord = (first_dot_coord[0], first_dot_coord[1] - 1) # bottom right
+        third_dot_coord = (first_dot_coord[0] - 1, first_dot_coord[1] + 1) # bottom left
+        fourth_dot_coord = (first_dot_coord[0], first_dot_coord[1] + 1) # bottom right
 
     # if first dot is bottom left
     elif (first_dot_square_pos == (1,0)):
@@ -84,9 +84,11 @@ def drawSquareDots(grid, screen, grid_length, first_dot_coord, first_dot_square_
 
 # display the square(s) made by the user
 def drawSquares(grid, screen, first_dot_coord, player_id, cfg: Config):
+
     dot : Dot = grid[first_dot_coord[1]][first_dot_coord[0]]
 
     while len(dot.square_pos) > 0:
+
         first_dot_square_pos = dot.square_pos[0]
 
         vec = dot.square_pos.pop(0)

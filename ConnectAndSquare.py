@@ -1,12 +1,15 @@
 from typing import *
+import time
 import pygame
 from sys import exit
-from classes import Dot, Config
+from classes import Config
 from drawingFuncs import *
 from gameplayFuncs import *
+from playerAI import *
 
 # initialize configurations
 cfg = Config()
+cfg.askGameMode()
 cfg.askStyle()
 cfg.askGridSize()
 
@@ -42,13 +45,13 @@ def main():
                 exit()
             
             # select the first dot
-            if (event.type == pygame.MOUSEBUTTONDOWN and click_state == False):
+            if (event.type == pygame.MOUSEBUTTONDOWN and click_state == False and (cfg.gamemode == 0 or (cfg.gamemode == 1 and player_id == 0))):
                 first_dot_coord = getSelectedDot(cfg.grid_size)
                 drawSelectedDot(cfg.grid_size, screen, first_dot_coord, player_id, cfg)
                 click_state = True
 
             # select the second dot
-            elif (event.type == pygame.MOUSEBUTTONDOWN and click_state == True):
+            elif (event.type == pygame.MOUSEBUTTONDOWN and click_state == True and (cfg.gamemode == 0 or (cfg.gamemode == 1 and player_id == 0))):
 
                 second_dot_coord = getSelectedDot(cfg.grid_size)
                 diff_0 = first_dot_coord[0] - second_dot_coord[0]
@@ -92,8 +95,44 @@ def main():
                     drawSingleDot(cfg.grid_size, screen, first_dot_coord)
                     print("You can't make diagonal lines!\nPlay again!")
                     click_state = False
-                
 
+
+            # exclusive to the 'Human vs AI' gamemode: plays the AI turn
+            elif (cfg.gamemode == 1 and player_id == 1):
+
+                # to give some "thinking time" to the AI player
+                time.sleep(1.0)
+
+                # get AI play based on the algorithm
+                points_AI, first_dot_coord, second_dot_coord, first_dot, second_dot = greedy(grid, cfg)
+
+                # update the dots
+                diff_0 = first_dot_coord[0] - second_dot_coord[0]
+                diff_1 = first_dot_coord[1] - second_dot_coord[1]
+                updateDotState(first_dot, diff_0, diff_1)
+                updateDotState(second_dot, -diff_0, -diff_1)
+
+                # apply the new states of the dots
+                mergeDots(grid[first_dot_coord[1]][first_dot_coord[0]], first_dot)
+                mergeDots(grid[second_dot_coord[1]][second_dot_coord[0]], second_dot)
+
+                # display the AI move                
+                drawLine(first_dot_coord, second_dot_coord, cfg.grid_size, screen, player_id, cfg)
+                drawSingleDot(cfg.grid_size, screen, first_dot_coord)
+                drawSingleDot(cfg.grid_size, screen, second_dot_coord)
+
+                # check if the AI made / closed a square 
+                # if so, draw it and update the score
+                if (points_AI > 0):
+                    player_score[player_id] += points_AI
+                    drawSquares(grid, screen, first_dot_coord, player_id, cfg)
+                    displayPlayerScores(cfg.grid_size, screen, player_score, cfg)
+
+                elif (points_AI == 0):
+                    player_id = switch_player(player_id)
+                    
+
+            # check if the game ended
             if player_score[0] + player_score[1] == (cfg.grid_size-1)**2:
                 running = False
                 break
@@ -105,7 +144,6 @@ def main():
         print(f"Player 2 has won with {player_score[1]} squares!")
     else:
         print("Tie!")
-
 
 
 if __name__ == "__main__":
